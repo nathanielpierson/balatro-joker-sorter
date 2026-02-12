@@ -77,6 +77,17 @@ const sortedJokers = computed(() => {
   })
 })
 
+const searchQuery = ref('')
+
+const filteredJokers = computed(() => {
+  const q = searchQuery.value.trim().toLowerCase()
+  if (!q) return sortedJokers.value
+  return sortedJokers.value.filter((j) => {
+    const name = j.id.replace(/\.webp$/, '').replace(/_/g, ' ')
+    return name.toLowerCase().includes(q) || j.id.toLowerCase().includes(q)
+  })
+})
+
 function getStakeUrl(stake: '' | StakeKey | undefined): string {
   return stake ? (stakeUrls[stake] ?? '') : ''
 }
@@ -86,9 +97,18 @@ function getStakeUrl(stake: '' | StakeKey | undefined): string {
   <div class="app">
     <h1>Balatro Joker Stakes</h1>
     <p class="subtitle">Pick the stake you've achieved for each joker. List is sorted highest stake first.</p>
+    <div class="search-wrap">
+      <input
+        v-model="searchQuery"
+        type="search"
+        placeholder="Search jokers..."
+        class="search-input"
+        aria-label="Search jokers"
+      />
+    </div>
     <div class="grid">
       <div
-        v-for="joker in sortedJokers"
+        v-for="joker in filteredJokers"
         :key="joker.id"
         class="card"
       >
@@ -130,9 +150,41 @@ h1 {
 }
 
 .subtitle {
-  margin: 0 0 1.5rem;
+  margin: 0 0 1rem;
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.95rem;
+}
+
+.search-wrap {
+  width: 100%;
+  margin-bottom: 1.25rem;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 320px;
+  padding: 0.6rem 1rem;
+  padding-left: 2.25rem;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.search-input:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: rgba(100, 108, 255, 0.6);
+  box-shadow: 0 0 0 3px rgba(100, 108, 255, 0.2);
 }
 
 .grid {
