@@ -14,7 +14,7 @@ export type StakeKey = (typeof STAKE_ORDER)[number]
 
 export const STAKE_OPTIONS: { value: '' | StakeKey; label: string }[] = [
   { value: '', label: 'No sticker' },
-  ...STAKE_ORDER.map((s) => ({ value: s as StakeKey, label: s })),
+  ...[...STAKE_ORDER].reverse().map((s) => ({ value: s as StakeKey, label: s })),
 ]
 
 // Rank for sorting: higher = higher on list. No sticker = 0, Gold = 8.
